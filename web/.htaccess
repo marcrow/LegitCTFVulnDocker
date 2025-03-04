@@ -1,0 +1,15 @@
+<FilesMatch "\.(conf|sh|pem)$">
+    Require all denied
+</FilesMatch>
+
+<Files "cookie.txt">
+    Require all denied
+</Files>
+
+<Files "Dockerfile">
+    Require all denied
+</Files>
+
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>

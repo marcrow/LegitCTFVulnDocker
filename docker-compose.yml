@@ -1,0 +1,62 @@
+services:
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - db_net
+
+  web:
+    build:
+      context: ./web
+      args:
+        DEFAULT_PASSWORD: ${DEFAULT_PASSWORD}
+        MACHINE_NAME: ${MACHINE_NAME}
+        CTF_ID: ${CTF_ID}
+        VM_HOST_IP: ${VM_HOST_IP}
+        LAN_SUBNET: ${LAN_SUBNET}
+        DASHBOARD_PORT: ${DASHBOARD_PORT}
+    ports:
+      - "8083:80"
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_USER: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+      DB_NAME: ${MYSQL_DATABASE}
+      MACHINE_NAME: ${MACHINE_NAME}
+      CTF_ID: ${CTF_ID}
+      VM_HOST_IP: ${VM_HOST_IP}
+    extra_hosts:
+      - "ctf.local: ${CTF_IP}"
+    networks:
+      db_net:
+      lan_net:
+      ctf-docker:
+
+volumes:
+  db_data:
+
+networks:
+  lan_net:
+    name: lan_net
+    driver: macvlan
+    driver_opts:
+      parent: ${LAN_INTERFACE} 
+    ipam:
+      config:
+        - subnet: ${LAN_SUBNET} 
+          gateway: ${LAN_GATEWAY}  
+          ip_range: ${LAN_RANGE}
+  ctf-docker:
+    name: ctf-docker
+    external: true
+  db_net:
+    driver: bridge
