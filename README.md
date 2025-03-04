@@ -9,7 +9,7 @@ It is designed for web vulnerability, but it can be easily changed.
 
 Create a new project by copying the content of this repo.
 Edit the .env file.
-Retrieve your CTF server certificate from your LegitCTF instance inside the ansible>roles>ctf_client_install>files directory. The fdile should be named cert.pem.  
+Retrieve your CTF server certificate from your LegitCTF instance inside the myapp/certs directory. The fdile should be named cert.pem.  
 Create the init.sql based on your needs.
 Create your web app inside the web directory.
 
